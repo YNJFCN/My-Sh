@@ -14,7 +14,6 @@ sudo apt upgrade -y
 echo -e "${GREEN}开始安装依赖软件包...${NC}"
 sudo apt install -y build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev
 
-# 检查并创建目录
 TENGINE="/main/apps/tengine"
 if [ ! -d "$TENGINE" ]; then
     sudo mkdir -p $TENGINE
@@ -38,7 +37,6 @@ echo -e "${GREEN}开始配置编译选项...${NC}"
 echo -e "${GREEN}开始编译和安装...${NC}"
 sudo make install
 
-# environment variables
 echo 'export PATH="/main/apps/tengine/sbin/:$PATH"' | sudo tee -a /root/.bashrc
 
 sudo wget https://raw.githubusercontent.com/YNJFCN/My-Sh/main/service/nginx.service -O /etc/systemd/system/nginx.service
