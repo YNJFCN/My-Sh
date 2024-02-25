@@ -17,9 +17,7 @@ sudo apt install -y build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev libs
 # 检查并创建目录
 TENGINE="/main/apps/tengine"
 if [ ! -d "$TENGINE" ]; then
-    echo -e "${GREEN}创建安装目录 $TENGINE...${NC}"
     sudo mkdir -p $TENGINE
-    echo -e "${GREEN}安装目录创建完成.${NC}"
 fi
 
 cd $TENGINE
