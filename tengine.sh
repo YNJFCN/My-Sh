@@ -26,7 +26,7 @@ cd $TENGINE
 
 echo -e "${GREEN}开始下载源码...${NC}"
 version=$(curl -Ls "https://api.github.com/repos/alibaba/tengine/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-wget http://tengine.taobao.org/download/tengine-${version}.tar.gz
+wget -N --no-check-certificate http://tengine.taobao.org/download/tengine-${version}.tar.gz
 
 
 echo -e "${GREEN}开始解压源码...${NC}"
@@ -40,7 +40,9 @@ echo -e "${GREEN}开始配置编译选项...${NC}"
 echo -e "${GREEN}开始编译和安装...${NC}"
 sudo make install
 
-echo 'export PATH="/main/apps/tengine/sbin/:$PATH"' | sudo tee -a /root/.bashrc
+if ! grep -q "/main/apps/tengine/sbin/" /root/.bashrc; then
+    echo 'export PATH="/main/apps/tengine/sbin/:$PATH"' | sudo tee -a /root/.bashrc
+fi
 
 sudo wget https://raw.githubusercontent.com/YNJFCN/My-Sh/main/service/nginx.service -O /etc/systemd/system/nginx.service
 sudo systemctl daemon-reload
@@ -52,7 +54,7 @@ sudo rm -rf tengine-${version}
 
 source /root/.bashrc
 
-echo -e "${yellow}是否继续安装NODE.JS?${NCY}"
+echo -e "${GREEN}是否继续安装NODE.JS?${NC}"
 read -p "(yes/no): " DONT
 if [ "$DONT" = "yes" ] || [ "$DONT" = "y" ];then
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
