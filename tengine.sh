@@ -1,7 +1,10 @@
 #!/bin/bash
 
 GREEN='\033[0;32m'
-NC='\033[0m' 
+NC='\033[0m'
+yellow='\033[0;33m'
+NCY='\033[0m'
+
 
 [[ $EUID -ne 0 ]] && echo -e "${GREEN}错误：${NC} 必须使用root用户运行此脚本！\n" && exit 1
 
@@ -48,5 +51,13 @@ sudo rm -f tengine-${version}.tar.gz
 sudo rm -rf tengine-${version}
 
 source /root/.bashrc
+
+echo -e "${yellow}是否继续安装NODE.JS?${NCY}"
+read -p "(yes/no): " DONT
+if [ "$DONT" = "yes" ] || [ "$DONT" = "y" ];then
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source /root/.bashrc
+nvm install node
+fi
 
 echo -e "${GREEN}安装完成.${NC}"
