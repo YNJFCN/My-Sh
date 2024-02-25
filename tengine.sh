@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# 定义ANSI转义序列
 GREEN='\033[0;32m'
-NC='\033[0m' # No Color
+NC='\033[0m' 
 
 [[ $EUID -ne 0 ]] && echo -e "${GREEN}错误：${NC} 必须使用root用户运行此脚本！\n" && exit 1
 
@@ -44,7 +43,7 @@ sudo make install
 # environment variables
 echo 'export PATH="/main/apps/tengine/sbin/:$PATH"' | sudo tee -a /root/.bashrc
 
-sudo wget https://raw.githubusercontent.com/YNJFCN/My-Sh/main/service/nginx.service?token=GHSAT0AAAAAACOTO6HMRV4AZSAMHYMQO42IZO3PAAQ -O /etc/systemd/system/nginx.service
+sudo wget https://raw.githubusercontent.com/YNJFCN/My-Sh/main/service/nginx.service -O /etc/systemd/system/nginx.service
 sudo systemctl daemon-reload
 sudo systemctl enable nginx.service
 
