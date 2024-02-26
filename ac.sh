@@ -88,6 +88,12 @@ if [ $? -eq 0 ]; then
         fi
 
     certPath=/root/cert/${CF_Domain}
+    if [ ! -d "$certPath" ]; then
+        mkdir $certPath
+    else
+        rm -rf $certPath
+        mkdir $certPath
+    fi
     ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file ${certPath}/ca.cer \
     --cert-file ${certPath}/${CF_Domain}.cer --key-file ${certPath}/${CF_Domain}.key \
     --fullchain-file ${certPath}/full.${CF_Domain}.cer
@@ -136,6 +142,12 @@ if [ $? -eq 0 ]; then
         fi
 
     certPath=/root/cert/${CF_Domain}
+    if [ ! -d "$certPath" ]; then
+        mkdir $certPath
+    else
+        rm -rf $certPath
+        mkdir $certPath
+    fi
     ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file ${certPath}/ca.cer \
     --cert-file ${certPath}/${CF_Domain}.cer --key-file ${certPath}/${CF_Domain}.key \
     --fullchain-file ${certPath}/full.${CF_Domain}.cer
