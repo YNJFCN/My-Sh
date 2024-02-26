@@ -52,7 +52,7 @@ release(){
         else
             LOGI "证书签发成功,安装中..."
         fi
-        
+
     ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file ${certPath}/ca.cer \
     --cert-file ${certPath}/${CF_Domain}.cer --key-file ${certPath}/${CF_Domain}.key \
     --fullchain-file ${certPath}/full.${CF_Domain}.cer
@@ -60,8 +60,8 @@ release(){
             LOGE "证书安装失败,脚本退出"
             exit 1
         else
-            LOGI "安装路径为${certPath}目录"
             LOGI "证书安装成功,开启自动更新..."
+            LOGI "安装路径为${certPath}"            
         fi
 
     ~/.acme.sh/acme.sh --upgrade --auto-upgrade
