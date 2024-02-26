@@ -34,6 +34,11 @@ confirm() {
 }
 
 release(){
+        certPath=/root/Certificate/${CF_Domain}   
+        if [ ! -d "$certPath" ]; then
+            sudo mkdir -p $certPath
+        fi
+
         ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
         if [ $? -ne 0 ]; then
             LOGE "修改默认CA为Lets'Encrypt失败,脚本退出"
@@ -47,11 +52,7 @@ release(){
         else
             LOGI "证书签发成功,安装中..."
         fi
-
-    certPath="/root/Certificate/${CF_Domain}"
-    if [ ! -d "$certPath" ]; then
-        mkdir "$certPath"
-    fi
+        
     ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file ${certPath}/ca.cer \
     --cert-file ${certPath}/${CF_Domain}.cer --key-file ${certPath}/${CF_Domain}.key \
     --fullchain-file ${certPath}/full.${CF_Domain}.cer
@@ -97,10 +98,7 @@ if [ $? -eq 0 ]; then
     CF_Domain=""
     CF_GlobalKey=""
     CF_AccountEmail=""
-    certPath=/root/Certificate    
-    if [ ! -d "$certPath" ]; then
-        mkdir $certPath
-    fi
+
     LOGD "是否直接颁发证书"
     read -p "[y/n]" DONT
     if [ "$DONT" = "y" ] || [ "$DONT" = "Y" ];then
