@@ -100,9 +100,6 @@ if [ $? -eq 0 ]; then
     certPath=/root/Certificate    
     if [ ! -d "$certPath" ]; then
         mkdir $certPath
-    else
-        rm -rf $certPath
-        mkdir $certPath
     fi
     LOGD "是否直接颁发证书"
     read -p "[y/n]" DONT
