@@ -39,7 +39,7 @@ LOGI "该脚本将使用Acme脚本申请证书,使用时需保证:"
 LOGI "1.知晓Cloudflare 注册邮箱"
 LOGI "2.知晓Cloudflare Global API Key"
 LOGI "3.域名已通过Cloudflare进行解析到当前服务器"
-LOGI "4.该脚本申请证书默认安装路径为/root/cert目录"
+LOGI "4.该脚本申请证书默认安装路径为/root/Certificate目录"
 confirm "我已确认以上内容[y/n]" "y"
 
 if [ $? -eq 0 ]; then
@@ -56,14 +56,6 @@ if [ $? -eq 0 ]; then
     CF_GlobalKey=""
     CF_AccountEmail=""
     certPath=/root/Certificate
-
-    LOGI "默认安装路径为/root/Certificate目录"
-    if [ ! -d "$certPath" ]; then
-        mkdir $certPath
-    else
-        rm -rf $certPath
-        mkdir $certPath
-    fi
 
     LOGD "是否直接颁发证书"
     read -p "[y/n]" DONT
@@ -101,6 +93,7 @@ if [ $? -eq 0 ]; then
             LOGE "证书安装失败,脚本退出"
             exit 1
         else
+            LOGI "安装路径为${certPath}目录"
             LOGI "证书安装成功,开启自动更新..."
         fi
 
@@ -133,6 +126,9 @@ if [ $? -eq 0 ]; then
             exit 1
         fi
 
+        export CF_Key="${CF_GlobalKey}"
+        export CF_Email=${CF_AccountEmail}
+
     ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
         if [ $? -ne 0 ]; then
             LOGE "证书签发失败,脚本退出"
@@ -141,7 +137,7 @@ if [ $? -eq 0 ]; then
             LOGI "证书签发成功,安装中..."
         fi
 
-    certPath="/root/cert/${CF_Domain}"
+    certPath="/root/Certificate/${CF_Domain}"
     if [ ! -d "$certPath" ]; then
         mkdir "$certPath"
     else
@@ -155,6 +151,7 @@ if [ $? -eq 0 ]; then
             LOGE "证书安装失败,脚本退出"
             exit 1
         else
+            LOGI "安装路径为${certPath}目录"
             LOGI "证书安装成功,开启自动更新..."
         fi
 
