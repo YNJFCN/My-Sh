@@ -64,7 +64,6 @@ if [ $? -eq 0 ]; then
 
     echo -e "是否直接进行颁发: "
     LOGD "[y/n] 默认 n" DONT
-    DONT=${DONT:-"n"}
     if [ "$DONT" == "y" ] || [ "$DONT" == "Y" ]; then
             ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
         if [ $? -ne 0 ]; then
