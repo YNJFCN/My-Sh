@@ -55,9 +55,9 @@ if [ $? -eq 0 ]; then
     CF_Domain=""
     CF_GlobalKey=""
     CF_AccountEmail=""
-    certPath=/root/cert
+    certPath=/root/Certificate
 
-    LOGI "默认安装路径为/root/cert目录"
+    LOGI "默认安装路径为/root/Certificate目录"
     if [ ! -d "$certPath" ]; then
         mkdir $certPath
     else
@@ -87,7 +87,7 @@ if [ $? -eq 0 ]; then
             LOGI "证书签发成功,安装中..."
         fi
 
-    certPath="/root/cert/${CF_Domain}"
+    certPath="/root/Certificate/${CF_Domain}"
     if [ ! -d "$certPath" ]; then
         mkdir "$certPath"
     else
