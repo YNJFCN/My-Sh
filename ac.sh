@@ -46,14 +46,18 @@ if [ $? -eq 0 ]; then
     cd ~
     LOGI "安装Acme脚本"
     curl https://get.acme.sh | sh
+    source ~/.bashrc
     if [ $? -ne 0 ]; then
         LOGE "安装acme脚本失败"
         exit 1
     fi
+
     CF_Domain=""
     CF_GlobalKey=""
     CF_AccountEmail=""
-    certPath=/root/cert
+    certPath=/root/cert/${CF_Domain}
+
+    LOGI "默认安装路径为/root/cert目录"
     if [ ! -d "$certPath" ]; then
         mkdir $certPath
     else
@@ -61,34 +65,39 @@ if [ $? -eq 0 ]; then
         mkdir $certPath
     fi
 
-    LOGD "请设置域名:"
-    read -p "Input your domain here:" CF_Domain
+    LOGD "是否直接颁发证书"
+    read -p "[y/n]" DONT
+    if [ "$DONT" = "y" ] || [ "$DONT" = "Y" ];then
 
-    LOGD "是否直接进行颁发: "
-    read -p "[y/n]" "n" DONT 
-    if [ "$DONT" == "y" ] || [ "$DONT" == "Y" ]; then
-        ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+    LOGD "请设置要申请的域名:"
+    read -p "Input your domain here:" CF_Domain
+    LOGD "你的域名设置为:${CF_Domain}"
+
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
         if [ $? -ne 0 ]; then
             LOGE "修改默认CA为Lets'Encrypt失败,脚本退出"
             exit 1
         fi
-        ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
+
+    ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
         if [ $? -ne 0 ]; then
             LOGE "证书签发失败,脚本退出"
             exit 1
         else
             LOGI "证书签发成功,安装中..."
         fi
-        ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file /root/cert/ca.cer \
-        --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
-        --fullchain-file /root/cert/fullchain.cer
+
+    ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file ${certPath}/ca.cer \
+    --cert-file ${certPath}/${CF_Domain}.cer --key-file ${certPath}/${CF_Domain}.key \
+    --fullchain-file ${certPath}/full.${CF_Domain}.cer
         if [ $? -ne 0 ]; then
             LOGE "证书安装失败,脚本退出"
             exit 1
         else
             LOGI "证书安装成功,开启自动更新..."
         fi
-        ~/.acme.sh/acme.sh --upgrade --auto-upgrade
+
+    ~/.acme.sh/acme.sh --upgrade --auto-upgrade
         if [ $? -ne 0 ]; then
             LOGE "自动更新设置失败,脚本退出"
             ls -lah cert
@@ -99,9 +108,10 @@ if [ $? -eq 0 ]; then
             ls -lah cert
             chmod 755 $certPath
         fi
-    fi
 
-    if [ "$DONT" == "n" ] || [ "$DONT" == "N" ]; then
+    else
+        LOGD "请设置域名:"
+        read -p "Input your domain here:" CF_Domain
         LOGD "你的域名设置为:${CF_Domain}"
         LOGD "请设置API密钥:"
         read -p "Input your key here:" CF_GlobalKey
@@ -110,30 +120,31 @@ if [ $? -eq 0 ]; then
         read -p "Input your email here:" CF_AccountEmail
         LOGD "你的注册邮箱为:${CF_AccountEmail}"
 
-        ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
         if [ $? -ne 0 ]; then
             LOGE "修改默认CA为Lets'Encrypt失败,脚本退出"
             exit 1
         fi
-        export CF_Key="${CF_GlobalKey}"
-        export CF_Email=${CF_AccountEmail}
-        ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
+
+    ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
         if [ $? -ne 0 ]; then
             LOGE "证书签发失败,脚本退出"
             exit 1
         else
             LOGI "证书签发成功,安装中..."
         fi
-        ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file /root/cert/ca.cer \
-        --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
-        --fullchain-file /root/cert/fullchain.cer
+
+    ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file ${certPath}/ca.cer \
+    --cert-file ${certPath}/${CF_Domain}.cer --key-file ${certPath}/${CF_Domain}.key \
+    --fullchain-file ${certPath}/full.${CF_Domain}.cer
         if [ $? -ne 0 ]; then
             LOGE "证书安装失败,脚本退出"
             exit 1
         else
             LOGI "证书安装成功,开启自动更新..."
         fi
-        ~/.acme.sh/acme.sh --upgrade --auto-upgrade
+
+    ~/.acme.sh/acme.sh --upgrade --auto-upgrade
         if [ $? -ne 0 ]; then
             LOGE "自动更新设置失败,脚本退出"
             ls -lah cert
