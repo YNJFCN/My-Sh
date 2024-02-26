@@ -61,11 +61,15 @@ if [ $? -eq 0 ]; then
     read -p "Input your domain here:" CF_Domain
     LOGD "你的域名设置为:${CF_Domain}"
     LOGD "请设置API密钥:"
-    read -p "Input your key here:" CF_GlobalKey
-    LOGD "你的API密钥为:${CF_GlobalKey}"
-    LOGD "请设置注册邮箱:"
-    read -p "Input your email here:" CF_AccountEmail
-    LOGD "你的注册邮箱为:${CF_AccountEmail}"
+    if [ -z "$CF_GlobalKey" ] || [ -z "$CF_AccountEmail" ]; then
+        read -p "Input your key here:" CF_GlobalKey
+        LOGD "你的API密钥为: ${CF_GlobalKey}"
+
+        read -p "Input your email here:" CF_AccountEmail
+        LOGD "你的注册邮箱为: ${CF_AccountEmail}"
+    else
+        LOGI "已检测到之前填写的API密钥和注册邮箱信息"
+    fi
     ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
     if [ $? -ne 0 ]; then
         LOGE "修改默认CA为Lets'Encrypt失败,脚本退出"
