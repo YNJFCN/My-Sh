@@ -67,12 +67,12 @@ release(){
     ~/.acme.sh/acme.sh --upgrade --auto-upgrade
         if [ $? -ne 0 ]; then
             LOGE "自动更新设置失败,脚本退出"
-            ls -lah cert
+            ls -lah $certPath
             chmod 755 $certPath
             exit 1
         else
             LOGI "证书已安装且已开启自动更新,具体信息如下"
-            ls -lah cert
+            ls -lah $certPath
             chmod 755 $certPath
         fi
 }
