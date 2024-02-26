@@ -77,15 +77,15 @@ if [ $? -eq 0 ]; then
 
         read -p "Input your email here:" CF_AccountEmail
         LOGD "你的注册邮箱为: ${CF_AccountEmail}"
+    fi    
 
-        # 将用户输入的信息写入文件
-        echo "CF_Key=$CF_GlobalKey" > /root/.acme.sh/account.conf
-        echo "CF_Email=$CF_AccountEmail" >> /root/.acme.sh/account.conf
         ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
     if [ $? -ne 0 ]; then
         LOGE "修改默认CA为Lets'Encrypt失败,脚本退出"
         exit 1
     fi
+    echo "CF_Key=$CF_GlobalKey" > /root/.acme.sh/account.conf
+    echo "CF_Email=$CF_AccountEmail" >> /root/.acme.sh/account.conf
     export CF_Key="${CF_GlobalKey}"
     export CF_Email=${CF_AccountEmail}
     ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
