@@ -236,7 +236,7 @@ show_menu(){
     LOGI "2. ------- 更新&升级 软件包"
     LOGI "3. ------- 申请SSL证书(acme申请)"
     LOGI "4. ------- 安装 Mysql"
-    read -p "请输入选择 [0-∞] 任意键退出: " ORDER
+    read -p "请输入选择 [0-16] 任意键退出: " ORDER
 
     if [ "${ORDER}" = "1" ]; then
         tengine
