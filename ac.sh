@@ -141,3 +141,4 @@ if [ $? -eq 0 ]; then
             chmod 755 $certPath
         fi
     fi       
+fi
