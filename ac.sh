@@ -87,12 +87,12 @@ if [ $? -eq 0 ]; then
             LOGI "证书签发成功,安装中..."
         fi
 
-    certPath=/root/cert/${CF_Domain}
+    certPath="/root/cert/${CF_Domain}"
     if [ ! -d "$certPath" ]; then
-        mkdir $certPath
+        mkdir "$certPath"
     else
-        rm -rf $certPath
-        mkdir $certPath
+        rm -rf "$certPath"
+        mkdir "$certPath"
     fi
     ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file ${certPath}/ca.cer \
     --cert-file ${certPath}/${CF_Domain}.cer --key-file ${certPath}/${CF_Domain}.key \
@@ -141,12 +141,12 @@ if [ $? -eq 0 ]; then
             LOGI "证书签发成功,安装中..."
         fi
 
-    certPath=/root/cert/${CF_Domain}
+    certPath="/root/cert/${CF_Domain}"
     if [ ! -d "$certPath" ]; then
-        mkdir $certPath
+        mkdir "$certPath"
     else
-        rm -rf $certPath
-        mkdir $certPath
+        rm -rf "$certPath"
+        mkdir "$certPath"
     fi
     ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file ${certPath}/ca.cer \
     --cert-file ${certPath}/${CF_Domain}.cer --key-file ${certPath}/${CF_Domain}.key \
