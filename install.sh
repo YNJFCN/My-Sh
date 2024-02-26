@@ -101,14 +101,7 @@ Certificate(){
     confirm "我已确认以上内容[y/n]" "y"
 
     if [ $? -eq 0 ]; then
-        cd ~
-        LOGI "安装Acme脚本"
-        curl https://get.acme.sh | sh
-        source ~/.bashrc
-        if [ $? -ne 0 ]; then
-            LOGE "安装acme脚本失败"
-            exit 1
-        fi
+
         CF_Domain=""
         CF_GlobalKey=""
         CF_AccountEmail=""
@@ -122,6 +115,14 @@ Certificate(){
         release
 
         else
+        cd ~
+        LOGI "安装Acme脚本"
+        curl https://get.acme.sh | sh
+        source ~/.bashrc
+        if [ $? -ne 0 ]; then
+            LOGE "安装acme脚本失败"
+            exit 1
+        fi
             LOGD "请设置域名:"
             read -p "Input your domain here:" CF_Domain
             LOGD "你的域名设置为:${CF_Domain}"
