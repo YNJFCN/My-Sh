@@ -55,7 +55,7 @@ if [ $? -eq 0 ]; then
     CF_Domain=""
     CF_GlobalKey=""
     CF_AccountEmail=""
-    certPath=/root/cert/${CF_Domain}
+    certPath=/root/cert
 
     LOGI "默认安装路径为/root/cert目录"
     if [ ! -d "$certPath" ]; then
@@ -87,6 +87,7 @@ if [ $? -eq 0 ]; then
             LOGI "证书签发成功,安装中..."
         fi
 
+    certPath=/root/cert/${CF_Domain}
     ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file ${certPath}/ca.cer \
     --cert-file ${certPath}/${CF_Domain}.cer --key-file ${certPath}/${CF_Domain}.key \
     --fullchain-file ${certPath}/full.${CF_Domain}.cer
@@ -134,6 +135,7 @@ if [ $? -eq 0 ]; then
             LOGI "证书签发成功,安装中..."
         fi
 
+    certPath=/root/cert/${CF_Domain}
     ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file ${certPath}/ca.cer \
     --cert-file ${certPath}/${CF_Domain}.cer --key-file ${certPath}/${CF_Domain}.key \
     --fullchain-file ${certPath}/full.${CF_Domain}.cer
