@@ -62,7 +62,7 @@ if [ $? -eq 0 ]; then
     LOGD "请设置域名:"
     read -p "Input your domain here:" CF_Domain
 
-    LOGD -e "是否直接进行颁发: "
+    LOGD "是否直接进行颁发: "
     read -p "[y/n]" "n" DONT 
     if [ "$DONT" == "y" ] || [ "$DONT" == "Y" ]; then
             ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
@@ -70,8 +70,6 @@ if [ $? -eq 0 ]; then
             LOGE "修改默认CA为Lets'Encrypt失败,脚本退出"
             exit 1
         fi
-        export CF_Key="${CF_GlobalKey}"
-        export CF_Email=${CF_AccountEmail}
         ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
         if [ $? -ne 0 ]; then
             LOGE "证书签发失败,脚本退出"
@@ -99,9 +97,7 @@ if [ $? -eq 0 ]; then
             ls -lah cert
             chmod 755 $certPath
         fi
-    else
-        # LOGD "请设置域名:"
-        # read -p "Input your domain here:" CF_Domain
+    if [ "$DONT" == "n" ] || [ "$DONT" == "N" ]; then
         LOGD "你的域名设置为:${CF_Domain}"
         LOGD "请设置API密钥:"
         read -p "Input your key here:" CF_GlobalKey
@@ -144,7 +140,4 @@ if [ $? -eq 0 ]; then
             ls -lah cert
             chmod 755 $certPath
         fi
-    fi        
-else
-    show_menu
-fi
+    fi       
