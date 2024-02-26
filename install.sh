@@ -247,6 +247,7 @@ show_menu(){
         elif [ "${ORDER}" = "4" ]; then
         sql
     elif [ -z "${ORDER}"]; then
+        history -c
         exit 1
     fi
 }
