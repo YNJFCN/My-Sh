@@ -201,14 +201,15 @@ renew(){
 
 sql(){  
     LOGI "安装MySQL"
-    sudo apt install mysql-server
+    apt update -y
+    apt install mysql-server -y
     if [ $? -ne 0 ]; then
         LOGE "Mysql安装失败,脚本退出"
         show_menu
     fi
 
     LOGI "启动MySQL"
-    sudo systemctl start mysql
+    service mysql start
     if [ $? -ne 0 ]; then
         LOGE "Mysql启动失败,脚本退出"
         show_menu
@@ -222,20 +223,20 @@ sql(){
     fi
 
     LOGI "MySQL状态"
-    sudo systemctl status mysql
+    sudo service mysql status
 
     show_menu
 }
 
 show_menu(){
     echo -e ""
-    LOGD "Ubuntu"
+    LOGD "     Ubuntu    "
     LOGD "————————————————"
     LOGI "1. ------- 安装 Tengine&NodeJS"
     LOGI "2. ------- 更新&升级 软件包"
     LOGI "3. ------- 申请SSL证书(acme申请)"
     LOGI "4. ------- 安装 Mysql"
-    read -p "请输入选择 [0-16] Enter退出: " ORDER
+    read -p "请输入选择 [0-16] 任意键退出: " ORDER
 
     if [ "${ORDER}" = "1" ]; then
         tengine
