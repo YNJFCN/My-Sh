@@ -63,7 +63,7 @@ if [ $? -eq 0 ]; then
     read -p "Input your domain here:" CF_Domain
 
     LOGD -e "是否直接进行颁发: "
-    read "[y/n]" DONT "n"
+    read -p "[y/n]" "n" DONT 
     if [ "$DONT" == "y" ] || [ "$DONT" == "Y" ]; then
             ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
         if [ $? -ne 0 ]; then
