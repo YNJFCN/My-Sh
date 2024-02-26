@@ -1,13 +1,9 @@
 #!/bin/bash
 
-GREEN='\033[0;32m'
-NC='\033[0m'
-yellow='\033[0;33m'
-NCY='\033[0m'
-red='\033[0;31m'
 green='\033[0;32m'
-yellow='\033[0;33m'
 plain='\033[0m'
+yellow='\033[0;33m'
+red='\033[0;31m'
 
 function LOGD() {
     echo -e "${yellow}[DEG] $* ${plain}"
@@ -22,17 +18,26 @@ function LOGI() {
 }
 
 
-[[ $EUID -ne 0 ]] && echo -e "${GREEN}错误：${NC} 必须使用root用户运行此脚本！\n" && exit 1
+[[ $EUID -ne 0 ]] && echo -e "${green}错误：${plain} 必须使用root用户运行此脚本！\n" && exit 1
 
-echo -e "${GREEN}开始更新软件包...${NC}"
-sudo apt update
-
-echo -e "${GREEN}开始升级软件包...${NC}"
-sudo apt upgrade -y
-
+confirm() {
+    if [[ $# > 1 ]]; then
+        echo && read -p "$1 [默认$2]: " temp
+        if [[ x"${temp}" == x"" ]]; then
+            temp=$2
+        fi
+    else
+        read -p "$1 [y/n]: " temp
+    fi
+    if [[ x"${temp}" == x"y" || x"${temp}" == x"Y" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
 
 tengine(){
-    echo -e "${GREEN}开始安装依赖软件包...${NC}"
+    echo -e "${green}开始安装依赖软件包...${plain}"
     sudo apt install -y build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev
 
     TENGINE="/main/apps/tengine"
@@ -42,20 +47,20 @@ tengine(){
 
     cd $TENGINE
 
-    echo -e "${GREEN}开始下载源码...${NC}"
+    echo -e "${green}开始下载源码...${plain}"
     version=$(curl -Ls "https://api.github.com/repos/alibaba/tengine/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     wget -N --no-check-certificate http://tengine.taobao.org/download/tengine-${version}.tar.gz
 
 
-    echo -e "${GREEN}开始解压源码...${NC}"
+    echo -e "${green}开始解压源码...${plain}"
     tar -zxvf tengine-${version}.tar.gz
 
     cd tengine-${version}
 
-    echo -e "${GREEN}开始配置编译选项...${NC}"
+    echo -e "${green}开始配置编译选项...${plain}"
     ./configure --prefix=$TENGINE
 
-    echo -e "${GREEN}开始编译和安装...${NC}"
+    echo -e "${green}开始编译和安装...${plain}"
     sudo make install
 
     if ! grep -q "/main/apps/tengine/sbin/" /root/.bashrc; then
@@ -72,16 +77,17 @@ tengine(){
 
     source /root/.bashrc
 
-    echo -e "${GREEN}是否继续安装NODE.JS?${NC}"
-    read -p "(yes/no): " DONT
-    if [ "$DONT" = "yes" ] || [ "$DONT" = "y" ];then
+    echo -e "${green}是否继续安装NODE.JS?${plain}"
+    read -p "(y/n) 默认 n: " DONT
+    if [ "$DONT" = "y" ] || [ "$DONT" = "Y" ];then
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
     source /root/.bashrc
     source /root/.nvm/nvm.sh
     nvm install node
     fi
 
-    echo -e "${GREEN}安装完成.${NC}"
+    echo -e "${green}安装完成.${plain}"
+    show_menu
 }
 
 Certificate(){
@@ -135,22 +141,7 @@ Certificate(){
             release
         fi
     fi
-}
-
-confirm() {
-    if [[ $# > 1 ]]; then
-        echo && read -p "$1 [默认$2]: " temp
-        if [[ x"${temp}" == x"" ]]; then
-            temp=$2
-        fi
-    else
-        read -p "$1 [y/n]: " temp
-    fi
-    if [[ x"${temp}" == x"y" || x"${temp}" == x"Y" ]]; then
-        return 0
-    else
-        return 1
-    fi
+    show_menu
 }
 
 release(){
@@ -195,17 +186,68 @@ release(){
             ls -lah $certPath
             chmod 755 $certPath
         fi
+        show_menu
 }
 
-echo -e ""
-LOGI "1. 安装 Tengine & NodeJS"
-LOGI "2. 一键申请SSL证书(acme申请)"
-LOGD "————————————————"
-echo && read -p "请输入选择 [0-16]: " ORDER
+renew(){
+    echo -e "${green}开始更新软件包...${plain}"
+    sudo apt update
 
-if [ ${ORDER} = "1" ]; then
-  tengine
-  elif [ ${ORDER} = "2" ]; then
-  Certificate
-  else
-fi
+    echo -e "${green}开始升级软件包...${plain}"
+    sudo apt upgrade -y
+
+    show_menu
+}
+
+sql(){  
+    LOGI "安装MySQL"
+    sudo apt install mysql-server
+    if [ $? -ne 0 ]; then
+        LOGE "Mysql安装失败,脚本退出"
+        show_menu
+    fi
+
+    LOGI "启动MySQL"
+    sudo systemctl start mysql
+    if [ $? -ne 0 ]; then
+        LOGE "Mysql启动失败,脚本退出"
+        show_menu
+    fi
+
+    LOGI "启用开机自启动"
+    sudo systemctl enable mysql
+    if [ $? -ne 0 ]; then
+        LOGE "自启动设置失败,脚本退出"
+        show_menu
+    fi
+
+    LOGI "MySQL状态"
+    sudo systemctl status mysql
+
+    show_menu
+}
+
+show_menu(){
+    echo -e ""
+    LOGD "Ubuntu"
+    LOGD "————————————————"
+    LOGI "1. ------- 安装 Tengine&NodeJS"
+    LOGI "2. ------- 更新&升级 软件包"
+    LOGI "3. ------- 申请SSL证书(acme申请)"
+    LOGI "4. ------- 安装 Mysql"
+    read -p "请输入选择 [0-16] Enter退出: " ORDER
+
+    if [ "${ORDER}" = "1" ]; then
+        tengine
+        elif [ "${ORDER}" = "2" ]; then
+        renew
+        elif [ "${ORDER}" = "3" ]; then
+        Certificate
+        elif [ "${ORDER}" = "4" ]; then
+        sql
+    elif [ -z "${ORDER}"]; then
+        exit 1
+    fi
+}
+
+show_menu
