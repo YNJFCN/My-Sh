@@ -1,3 +1,5 @@
+#!/bin/bash
+
 red='\033[0;31m'
 green='\033[0;32m'
 yellow='\033[0;33m'
@@ -65,7 +67,7 @@ if [ $? -eq 0 ]; then
     LOGD "是否直接进行颁发: "
     read -p "[y/n]" "n" DONT 
     if [ "$DONT" == "y" ] || [ "$DONT" == "Y" ]; then
-            ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+        ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
         if [ $? -ne 0 ]; then
             LOGE "修改默认CA为Lets'Encrypt失败,脚本退出"
             exit 1
@@ -97,6 +99,8 @@ if [ $? -eq 0 ]; then
             ls -lah cert
             chmod 755 $certPath
         fi
+    fi
+
     if [ "$DONT" == "n" ] || [ "$DONT" == "N" ]; then
         LOGD "你的域名设置为:${CF_Domain}"
         LOGD "请设置API密钥:"
@@ -140,5 +144,5 @@ if [ $? -eq 0 ]; then
             ls -lah cert
             chmod 755 $certPath
         fi
-    fi       
+    fi
 fi
