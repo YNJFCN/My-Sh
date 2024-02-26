@@ -77,53 +77,55 @@ release(){
         fi
 }
 
-echo -E ""
-LOGD "******使用说明******"
-LOGI "该脚本将使用Acme脚本申请证书,使用时需保证:"
-LOGI "1.知晓Cloudflare 注册邮箱"
-LOGI "2.知晓Cloudflare Global API Key"
-LOGI "3.域名已通过Cloudflare进行解析到当前服务器"
-LOGI "4.该脚本申请证书默认安装路径为/root/Certificate目录"
-confirm "我已确认以上内容[y/n]" "y"
+Certificate(){
+    echo -E ""
+    LOGD "******使用说明******"
+    LOGI "该脚本将使用Acme脚本申请证书,使用时需保证:"
+    LOGI "1.知晓Cloudflare 注册邮箱"
+    LOGI "2.知晓Cloudflare Global API Key"
+    LOGI "3.域名已通过Cloudflare进行解析到当前服务器"
+    LOGI "4.该脚本申请证书默认安装路径为/root/Certificate目录"
+    confirm "我已确认以上内容[y/n]" "y"
 
-if [ $? -eq 0 ]; then
-    cd ~
-    LOGI "安装Acme脚本"
-    curl https://get.acme.sh | sh
-    source ~/.bashrc
-    if [ $? -ne 0 ]; then
-        LOGE "安装acme脚本失败"
-        exit 1
-    fi
-    CF_Domain=""
-    CF_GlobalKey=""
-    CF_AccountEmail=""
-
-    LOGD "是否直接颁发证书"
-    read -p "[y/n]" DONT
-    if [ "$DONT" = "y" ] || [ "$DONT" = "Y" ];then
-    LOGD "请设置要申请的域名:"
-    read -p "Input your domain here:" CF_Domain
-    LOGD "你的域名设置为:${CF_Domain}"  
-    release
-
-    else
-        LOGD "请设置域名:"
-        read -p "Input your domain here:" CF_Domain
-        LOGD "你的域名设置为:${CF_Domain}"
-        LOGD "请设置API密钥:"
-        read -p "Input your key here:" CF_GlobalKey
-        LOGD "你的API密钥为:${CF_GlobalKey}"
-        LOGD "请设置注册邮箱:"
-        read -p "Input your email here:" CF_AccountEmail
-        LOGD "你的注册邮箱为:${CF_AccountEmail}"
-    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+    if [ $? -eq 0 ]; then
+        cd ~
+        LOGI "安装Acme脚本"
+        curl https://get.acme.sh | sh
+        source ~/.bashrc
         if [ $? -ne 0 ]; then
-            LOGE "修改默认CA为Lets'Encrypt失败,脚本退出"
+            LOGE "安装acme脚本失败"
             exit 1
         fi
-        export CF_Key="${CF_GlobalKey}"
-        export CF_Email=${CF_AccountEmail}
+        CF_Domain=""
+        CF_GlobalKey=""
+        CF_AccountEmail=""
+
+        LOGD "是否直接颁发证书"
+        read -p "[y/n]" DONT
+        if [ "$DONT" = "y" ] || [ "$DONT" = "Y" ];then
+        LOGD "请设置要申请的域名:"
+        read -p "Input your domain here:" CF_Domain
+        LOGD "你的域名设置为:${CF_Domain}"  
         release
+
+        else
+            LOGD "请设置域名:"
+            read -p "Input your domain here:" CF_Domain
+            LOGD "你的域名设置为:${CF_Domain}"
+            LOGD "请设置API密钥:"
+            read -p "Input your key here:" CF_GlobalKey
+            LOGD "你的API密钥为:${CF_GlobalKey}"
+            LOGD "请设置注册邮箱:"
+            read -p "Input your email here:" CF_AccountEmail
+            LOGD "你的注册邮箱为:${CF_AccountEmail}"
+        ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+            if [ $? -ne 0 ]; then
+                LOGE "修改默认CA为Lets'Encrypt失败,脚本退出"
+                exit 1
+            fi
+            export CF_Key="${CF_GlobalKey}"
+            export CF_Email=${CF_AccountEmail}
+            release
+        fi
     fi
-fi
+}
