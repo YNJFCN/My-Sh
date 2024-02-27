@@ -191,7 +191,7 @@ release(){
 
 renew(){
     echo -e "${green}开始更新软件包...${plain}"
-    sudo apt update
+    sudo apt update -y
 
     echo -e "${green}开始升级软件包...${plain}"
     sudo apt upgrade -y
