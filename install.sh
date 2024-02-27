@@ -77,7 +77,7 @@ tengine(){
     source /root/.bashrc
 
     echo -e "${green}是否继续安装NODE.JS?${plain}"
-    read -p "(y/n) 默认 n: " DONT
+    read -p "[y/n] [默认n]: " DONT
     if [ "$DONT" = "y" ] || [ "$DONT" = "Y" ];then
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
     source /root/.bashrc
