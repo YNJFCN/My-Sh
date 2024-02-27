@@ -238,18 +238,24 @@ show_menu(){
     LOGI "4. ------- 安装 Mysql"
     read -p "请输入选择 [0-16] 任意键退出: " ORDER
 
-    if [ "${ORDER}" = "1" ]; then
-        tengine
-        elif [ "${ORDER}" = "2" ]; then
-        renew
-        elif [ "${ORDER}" = "3" ]; then
-        Certificate
-        elif [ "${ORDER}" = "4" ]; then
-        sql
-    elif [ -z "${ORDER}"]; then
-        history -c
-        exit 1
-    fi
+    case $ORDER in
+        1)
+            tengine
+            ;;
+        2)
+            renew
+            ;;
+        3)
+            Certificate
+            ;;
+        4)
+            sql
+            ;;
+        *)
+            history -c
+            exit 1
+            ;;
+    esac
 }
 
 show_menu
