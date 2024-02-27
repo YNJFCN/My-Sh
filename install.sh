@@ -17,7 +17,6 @@ function LOGI() {
     echo -e "${green}[INF] $* ${plain}"
 }
 
-
 [[ $EUID -ne 0 ]] && echo -e "${green}错误：${plain} 必须使用root用户运行此脚本！\n" && exit 1
 
 confirm() {
@@ -106,8 +105,8 @@ Certificate(){
         CF_GlobalKey=""
         CF_AccountEmail=""
 
-        LOGD "是否直接颁发证书"
-        read -p "[y/n]" DONT
+        LOGD "是否直接颁发证书(如已安装Acme&配置CA)"
+        read -p "[y/n] 默认n" DONT
         if [ "$DONT" = "y" ] || [ "$DONT" = "Y" ];then
         LOGD "请设置要申请的域名:"
         read -p "Input your domain here:" CF_Domain
@@ -231,7 +230,7 @@ sql(){
 
 show_menu(){
     echo -e ""
-    LOGD "     Ubuntu    "
+    LOGD " Ubuntu&Debian "
     LOGD "————————————————"
     LOGI "1. ------- 安装 Tengine"
     LOGI "2. ------- 更新 & 升级 软件包"
