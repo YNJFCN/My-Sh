@@ -232,7 +232,7 @@ show_menu(){
     echo -e ""
     LOGD " Ubuntu&Debian "
     LOGD "————————————————"
-    LOGI "1. ------- 安装 Tengine"
+    LOGI "1. ------- 安装 tengine"
     LOGI "2. ------- 更新 & 升级 软件包"
     LOGI "3. ------- 申请SSL证书(acme申请)"
     LOGI "4. ------- 安装 Mysql"
