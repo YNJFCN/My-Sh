@@ -92,11 +92,10 @@ tengine(){
 Certificate(){
     echo -E ""
     LOGD "******使用说明******"
-    LOGI "该脚本将使用Acme脚本申请证书,使用时需保证:"
-    LOGI "1.知晓Cloudflare 注册邮箱"
-    LOGI "2.知晓Cloudflare Global API Key"
+    LOGI "1.知晓Cloudflare 注册邮箱 & Global API Key"
     LOGI "3.域名已通过Cloudflare进行解析到当前服务器"
     LOGI "4.该脚本申请证书默认安装路径为/root/Certificate目录"
+    LOGI "5.默認CA为 Lets'Encrypt"
     confirm "我已确认以上内容[y/n]" "y"
 
     if [ $? -eq 0 ]; then
