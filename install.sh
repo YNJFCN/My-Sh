@@ -92,8 +92,8 @@ tengine(){
 Certificate(){
     echo -E ""
     LOGD "******使用说明******"
-    LOGI "5.默認CA为Lets'Encrypt"
-    LOGI "1.知晓Cloudflare 注册邮箱 & Global API Key"
+    LOGI "1.默認CA为Lets'Encrypt"
+    LOGI "2.知晓Cloudflare 注册邮箱 & Global API Key"
     LOGI "3.域名已通过Cloudflare进行解析到当前服务器"
     LOGI "4.该脚本申请证书默认安装路径为/root/Certificate目录"
     confirm "我已确认以上内容[y/n]" "y"
@@ -105,7 +105,7 @@ Certificate(){
         CF_AccountEmail=""
 
         LOGD "是否直接颁发证书(如已安装Acme&配置CA)"
-        read -p "[y/n] [默认n]" DONT
+        confirm "我已确认以上内容[y/n]" "n"
         if [ "$DONT" = "y" ] || [ "$DONT" = "Y" ];then
         LOGD "请设置要申请的域名:"
         read -p "Input your domain here:" CF_Domain
