@@ -105,7 +105,7 @@ Certificate(){
         CF_AccountEmail=""
 
         LOGD "是否直接颁发证书(如已安装Acme&配置CA)"
-        confirm "我已确认以上内容[y/n]" "n"
+        read -p "[y/n] [默认n]: " DONT
         if [ "$DONT" = "y" ] || [ "$DONT" = "Y" ];then
         LOGD "请设置要申请的域名:"
         read -p "Input your domain here:" CF_Domain
