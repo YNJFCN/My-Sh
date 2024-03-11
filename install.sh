@@ -35,7 +35,7 @@ confirm() {
     fi
 }
 
-tengine(){
+tengine() {
     echo -e "${green}开始安装依赖软件包...${plain}"
     sudo apt install -y build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev
 
@@ -49,7 +49,6 @@ tengine(){
     echo -e "${green}开始下载源码...${plain}"
     version=$(curl -Ls "https://api.github.com/repos/alibaba/tengine/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     wget -N --no-check-certificate http://tengine.taobao.org/download/tengine-${version}.tar.gz
-
 
     echo -e "${green}开始解压源码...${plain}"
     tar -zxvf tengine-${version}.tar.gz
@@ -78,18 +77,18 @@ tengine(){
 
     echo -e "${green}是否继续安装NODE.JS?${plain}"
     read -p "[y/n] [默认n]: " DONT
-    if [ "$DONT" = "y" ] || [ "$DONT" = "Y" ];then
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-    source /root/.bashrc
-    source /root/.nvm/nvm.sh
-    nvm install node
+    if [ "$DONT" = "y" ] || [ "$DONT" = "Y" ]; then
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+        source /root/.bashrc
+        source /root/.nvm/nvm.sh
+        nvm install node
     fi
 
     echo -e "${green}安装完成.${plain}"
     show_menu
 }
 
-Certificate(){
+Certificate() {
     echo -E ""
     LOGD "******使用说明******"
     LOGI "1.默認CA为Lets'Encrypt"
@@ -106,21 +105,21 @@ Certificate(){
 
         LOGD "是否直接颁发证书(如已安装Acme&配置CA)"
         read -p "[y/n] [默认n]:" DONT
-        if [ "$DONT" = "y" ] || [ "$DONT" = "Y" ];then
-        LOGD "请设置要申请的域名:"
-        read -p "Input your domain here:" CF_Domain
-        LOGD "你的域名设置为:${CF_Domain}"  
-        release
+        if [ "$DONT" = "y" ] || [ "$DONT" = "Y" ]; then
+            LOGD "请设置要申请的域名:"
+            read -p "Input your domain here:" CF_Domain
+            LOGD "你的域名设置为:${CF_Domain}"
+            release
 
         else
-        cd ~
-        LOGI "安装Acme脚本"
-        curl https://get.acme.sh | sh
-        source ~/.bashrc
-        if [ $? -ne 0 ]; then
-            LOGE "安装acme脚本失败"
-            exit 1
-        fi
+            cd ~
+            LOGI "安装Acme脚本"
+            curl https://get.acme.sh | sh
+            source ~/.bashrc
+            if [ $? -ne 0 ]; then
+                LOGE "安装acme脚本失败"
+                exit 1
+            fi
             LOGD "请设置域名:"
             read -p "Input your domain here:" CF_Domain
             LOGD "你的域名设置为:${CF_Domain}"
@@ -130,7 +129,7 @@ Certificate(){
             LOGD "请设置注册邮箱:"
             read -p "Input your email here:" CF_AccountEmail
             LOGD "你的注册邮箱为:${CF_AccountEmail}"
-        ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+            ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
             if [ $? -ne 0 ]; then
                 LOGE "修改默认CA为Lets'Encrypt失败,脚本退出"
                 exit 1
@@ -143,52 +142,52 @@ Certificate(){
     show_menu
 }
 
-release(){
-        certPath=/root/Certificate/${CF_Domain}   
-        if [ ! -d "$certPath" ]; then
-            sudo mkdir -p $certPath
-        fi
+release() {
+    certPath=/root/Certificate/${CF_Domain}
+    if [ ! -d "$certPath" ]; then
+        sudo mkdir -p $certPath
+    fi
 
-        ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-        if [ $? -ne 0 ]; then
-            LOGE "修改默认CA为Lets'Encrypt失败,脚本退出"
-            exit 1
-        fi
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+    if [ $? -ne 0 ]; then
+        LOGE "修改默认CA为Lets'Encrypt失败,脚本退出"
+        exit 1
+    fi
 
     ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
-        if [ $? -ne 0 ]; then
-            LOGE "证书签发失败,脚本退出"
-            exit 1
-        else
-            LOGI "证书签发成功,安装中..."
-        fi
+    if [ $? -ne 0 ]; then
+        LOGE "证书签发失败,脚本退出"
+        exit 1
+    else
+        LOGI "证书签发成功,安装中..."
+    fi
 
     ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file ${certPath}/ca.cer \
-    --cert-file ${certPath}/${CF_Domain}.cer --key-file ${certPath}/${CF_Domain}.key \
-    --fullchain-file ${certPath}/fullchain.cer
-        if [ $? -ne 0 ]; then
-            LOGE "证书安装失败,脚本退出"
-            exit 1
-        else
-            LOGI "证书安装成功,开启自动更新..."
-            LOGI "安装路径为${certPath}"            
-        fi
+        --cert-file ${certPath}/${CF_Domain}.cer --key-file ${certPath}/${CF_Domain}.key \
+        --fullchain-file ${certPath}/fullchain.cer
+    if [ $? -ne 0 ]; then
+        LOGE "证书安装失败,脚本退出"
+        exit 1
+    else
+        LOGI "证书安装成功,开启自动更新..."
+        LOGI "安装路径为${certPath}"
+    fi
 
     ~/.acme.sh/acme.sh --upgrade --auto-upgrade
-        if [ $? -ne 0 ]; then
-            LOGE "自动更新设置失败,脚本退出"
-            ls -lah $certPath
-            chmod 755 $certPath
-            exit 1
-        else
-            LOGI "证书已安装且已开启自动更新,具体信息如下"
-            ls -lah $certPath
-            chmod 755 $certPath
-        fi
-        show_menu
+    if [ $? -ne 0 ]; then
+        LOGE "自动更新设置失败,脚本退出"
+        ls -lah $certPath
+        chmod 755 $certPath
+        exit 1
+    else
+        LOGI "证书已安装且已开启自动更新,具体信息如下"
+        ls -lah $certPath
+        chmod 755 $certPath
+    fi
+    show_menu
 }
 
-renew(){
+renew() {
     echo -e "${green}开始更新软件包...${plain}"
     sudo apt update -y
 
@@ -198,7 +197,7 @@ renew(){
     show_menu
 }
 
-sql(){  
+sql() {
     LOGI "安装MySQL"
     apt update -y
     apt install mysql-server -y
@@ -227,7 +226,7 @@ sql(){
     show_menu
 }
 
-show_menu(){
+show_menu() {
     echo -e ""
     LOGD " Ubuntu&Debian "
     LOGD "————————————————"
@@ -238,22 +237,22 @@ show_menu(){
     read -p "请输入选择 [0-16] Enter退出: " ORDER
 
     case $ORDER in
-        1)
-            tengine
-            ;;
-        2)
-            renew
-            ;;
-        3)
-            Certificate
-            ;;
-        4)
-            sql
-            ;;
-        *)
-            history -c
-            exit 1
-            ;;
+    1)
+        tengine
+        ;;
+    2)
+        renew
+        ;;
+    3)
+        Certificate
+        ;;
+    4)
+        sql
+        ;;
+    *)
+        history -c
+        exit 1
+        ;;
     esac
 }
 
